@@ -1,0 +1,30 @@
+name: Run Zencoder Agent on PR review
+
+on:
+  pull_request:
+    types:
+      - opened            # new PR
+      - review_requested  # someone clicked “Re-request review”
+
+jobs:
+  agent-run:
+
+    # Only run when the PR is opened, OR when a review is requested *for* our bot
+    if: |
+      github.event.action == 'opened' ||
+      (
+        github.event.action == 'review_requested' &&
+        github.event.requested_reviewer.login == 'viborc'
+      )
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Running Zencoder Agent
+        uses: zencoderai/zen-agents-action@main
+        with:
+          prompt: "Please review the pull request with number ${{ github.event.pull_request.number }} and add comment to it. Please address only the serious issues, not the minor ones. If you didn't find any serious issues, please write 'Looks good to me!'."
+          zencoder_client_id: "${{ secrets.ZENCODER_CLIENT_ID }}"
+          zencoder_client_secret: "${{ secrets.ZENCODER_CLIENT_SECRET }}"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
