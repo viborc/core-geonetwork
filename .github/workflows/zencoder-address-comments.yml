@@ -12,9 +12,7 @@ env:
 
 jobs:
   address-review-comments:
-    runs-on:
-      group: buildfarm
-      labels: "buildfarm-large"
+    runs-on: ubuntu-latest
     if: |
       github.event.review.state == 'changes_requested' &&
       contains(github.event.pull_request.user.login, 'viborc')
