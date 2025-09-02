@@ -8,6 +8,7 @@ on:
 
 jobs:
   agent-run:
+    runs-on: ubuntu-latest
 
     # Only run when the PR is opened, OR when a review is requested *for* our bot
     if: |
