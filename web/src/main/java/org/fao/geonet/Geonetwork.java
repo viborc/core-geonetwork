@@ -97,22 +97,71 @@ import java.util.concurrent.TimeUnit;
 
 
 /**
- * This is the main class, it handles http connections and inits the system.
+ * @brief Main GeoNetwork application class that handles HTTP connections and initializes the system.
+ * 
+ * This class is responsible for the complete initialization of the GeoNetwork system.
+ * It handles the setup of all core components including:
+ * - Application context and configuration
+ * - Database connections and data initialization
+ * - Search functionality
+ * - Schema management
+ * - Thesaurus management
+ * - OAI-PMH services
+ * - Harvesting services
+ * - System monitoring
+ * 
+ * It implements the ApplicationHandler interface to integrate with the Jeeves framework.
  */
 public class Geonetwork implements ApplicationHandler {
+    /** @var logger The system logger instance */
     private Logger logger;
+    
+    /** @var appPath The application's base file path */
     private Path appPath;
+    
+    /** @var searchMan The search manager for handling search operations */
     private EsSearchManager searchMan;
+    
+    /** @var _applicationContext Spring application context */
     private ConfigurableApplicationContext _applicationContext;
+    
+    /** @var oaipmhDis The OAI-PMH dispatcher for handling OAI-PMH protocol requests */
     private OaiPmhDispatcher oaipmhDis;
 
+    /**
+     * @brief Returns the application context name.
+     * 
+     * This method is part of the ApplicationHandler interface implementation.
+     * It provides the name of the context under which the application runs.
+     * 
+     * @return The context name as defined in Geonet constants
+     */
     public String getContextName() {
         return Geonet.CONTEXT_NAME;
     }
 
 
     /**
-     * Inits the engine, loading all needed data.
+     * @brief Initializes the GeoNetwork engine and loads all required data.
+     * 
+     * This is the main initialization method that sets up the entire GeoNetwork system.
+     * It performs the following operations:
+     * - Sets up the application context
+     * - Configures logging
+     * - Initializes the data directory
+     * - Sets up the database and imports initial data if needed
+     * - Configures caching
+     * - Initializes settings management
+     * - Sets up search functionality
+     * - Initializes schema management
+     * - Configures the OAI-PMH server
+     * - Sets up harvesting
+     * - Initializes various other subsystems
+     * 
+     * @param config The XML configuration element containing setup parameters
+     * @param context The service context providing access to the servlet environment
+     * @return A GeonetContext object containing references to all initialized components
+     * @throws Exception If any error occurs during initialization
      */
     public Object start(Element config, ServiceContext context) throws Exception {
         context.setAsThreadLocal();
@@ -356,6 +405,18 @@ public class Geonetwork implements ApplicationHandler {
         return gnContext;
     }
 
+    /**
+     * @brief Initializes and populates various application caches.
+     * 
+     * This method starts a background thread that pre-loads various caches:
+     * - WRO4J resource caches for web resources optimization
+     * - Formatter caches for metadata display
+     * 
+     * Pre-loading these caches improves performance for the first users of the system
+     * by avoiding the initial cache population delay during normal operation.
+     * 
+     * @param context The service context providing access to the application environment
+     */
     private void fillCaches(final ServiceContext context) {
         final FormatterApi formatService = context.getBean(FormatterApi.class); // this will initialize the formatter
 
@@ -412,6 +473,20 @@ public class Geonetwork implements ApplicationHandler {
         fillCaches.start();
     }
 
+    /**
+     * @brief Imports initial data into the database for a new installation.
+     * 
+     * This method checks if the database is empty (new installation) and if so:
+     * - Sets up the password encryptor for a first-time setup
+     * - Imports SQL data from initialization files
+     * - Creates and sets a unique site UUID
+     * - Initializes the ISO languages mapper
+     * 
+     * The method is only executed for new installations and is skipped for
+     * existing databases to prevent data corruption.
+     * 
+     * @param context The service context providing access to the application environment
+     */
     private void importDatabaseData(final ServiceContext context) {
         // check if database has any data
         final SettingRepository settingRepository = context.getBean(SettingRepository.class);
@@ -464,8 +539,20 @@ public class Geonetwork implements ApplicationHandler {
     }
 
     /**
-     * Sets up a periodic check whether GeoNetwork can successfully write to the database. If it
-     * can't, GeoNetwork will automatically switch to read-only mode.
+     * @brief Sets up a periodic database connectivity check for failover support.
+     * 
+     * This method establishes a scheduled task that periodically checks whether 
+     * GeoNetwork can successfully write to the database. If the database becomes
+     * unavailable for writing, GeoNetwork will automatically switch to read-only mode.
+     * When database write access is restored, the system will switch back to read-write mode.
+     * 
+     * The heartbeat mechanism provides automatic failover capability for high-availability
+     * deployments with read-only database replicas.
+     * 
+     * @param gc The GeonetContext containing application components
+     * @param initialDelay The delay in seconds before the first check is performed
+     * @param fixedDelay The fixed delay in seconds between consecutive checks
+     * @throws SchedulerException If there is an error setting up the scheduled task
      */
     private void createDBHeartBeat(final GeonetContext gc, Integer initialDelay, Integer fixedDelay) throws SchedulerException {
         logger.info("creating DB heartbeat with initial delay of " + initialDelay + " s and fixed delay of " + fixedDelay + " s");
@@ -501,6 +588,15 @@ public class Geonetwork implements ApplicationHandler {
                 }
             }
 
+            /**
+             * @brief Tests database write capability by attempting to create and delete a setting.
+             * 
+             * This method performs a simple write test to determine if the database
+             * is available for write operations. It creates a temporary setting,
+             * flushes it to the database, and then deletes it.
+             * 
+             * @return true if the database write operation succeeded, false otherwise
+             */
             private boolean checkDBWrite() {
                 SettingRepository settingsRepo = gc.getBean(SettingRepository.class);
                 try {
@@ -518,7 +614,16 @@ public class Geonetwork implements ApplicationHandler {
     }
 
     /**
-     * Creates a default site logo, only if the logo image doesn't exists
+     * @brief Creates a default site logo if one doesn't already exist.
+     * 
+     * This method checks if a logo image exists for the current site (identified by nodeUuid).
+     * If no logo is found, it copies a default GeoNetwork logo to use as the site logo.
+     * This ensures that every site has a logo, even for new installations or when
+     * upgrading from previous versions where the logos directory might not have been copied.
+     * 
+     * @param nodeUuid The UUID of the node/site
+     * @param context The service context providing access to the application environment
+     * @param appPath The application's base file path
      */
     private void createSiteLogo(String nodeUuid, ServiceContext context, Path appPath) {
         try {
@@ -534,9 +639,17 @@ public class Geonetwork implements ApplicationHandler {
     }
 
     /**
-     * Set system properties to those required
+     * @brief Sets required system properties for the application.
+     * 
+     * This method configures essential system properties needed by GeoNetwork:
+     * - Registers XML catalog files for schema plugins
+     * - Sets up MIME type mappings for proper content type handling
+     * 
+     * These properties ensure proper functioning of various subsystems that
+     * rely on system properties for configuration.
      *
-     * @param webappDir webapp path
+     * @param webappDir The web application directory path
+     * @param handlerConfig The service configuration containing setup parameters
      */
     private void setProps(Path webappDir, ServiceConfig handlerConfig) {
 
@@ -557,6 +670,19 @@ public class Geonetwork implements ApplicationHandler {
     }
 
 
+    /**
+     * @brief Gracefully shuts down the GeoNetwork application.
+     * 
+     * This method performs an orderly shutdown of all GeoNetwork components:
+     * - Stops the entity listener manager to prevent further database updates
+     * - Shuts down the CSW harvester response execution service
+     * - Stops the INSPIRE Atom harvester scheduler
+     * - Shuts down the harvest manager to stop all active harvesters
+     * - Stops the OAI-PMH dispatcher
+     * 
+     * A proper shutdown ensures that all resources are released and ongoing
+     * operations are completed or properly terminated.
+     */
     public void stop() {
         logger.info("Stopping geonetwork...");
         AbstractEntityListenerManager.setSystemRunning(false);
