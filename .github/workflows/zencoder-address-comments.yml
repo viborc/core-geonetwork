@@ -1,0 +1,32 @@
+name: Run Zencoder Agent to Address PR Comments
+
+on:
+  pull_request_review:
+    types:
+      - submitted
+    branches:
+      - main
+
+env:
+  AGENT_ID: "16d7a489-3e03-4e3e-aeec-7d4d5b10a08c" # PR Comment Fixer
+
+jobs:
+  address-review-comments:
+    runs-on:
+      group: buildfarm
+      labels: "buildfarm-large"
+    if: |
+      github.event.review.state == 'changes_requested' &&
+      contains(github.event.pull_request.user.login, 'viborc')
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Running Zencoder Agent to address comments
+        uses: zencoderai/zen-agents-action@main
+        with:
+          prompt: "Please address the review comments on pull request number ${{ github.event.pull_request.number }}"
+          agent: "${{ env.AGENT_ID }}"
+          zencoder_client_id: "${{ secrets.ZENCODER_CLIENT_ID }}"
+          zencoder_client_secret: "${{ secrets.ZENCODER_CLIENT_SECRET }}"
+          github_token: "${{ secrets.GITHUB_TOKEN }}"
