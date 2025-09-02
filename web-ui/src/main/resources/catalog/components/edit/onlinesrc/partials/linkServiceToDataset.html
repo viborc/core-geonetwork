@@ -1,0 +1,97 @@
+<div>
+  <form class="form-horizontal" role="form" data-ng-search-form="">
+    <input type="hidden" name="_csrf" value="{{csrf}}" />
+    <div class="onlinesrc-container">
+      <div class="form-group" data-ng-show="::config.sources['metadataStore']">
+        <label class="col-sm-2 control-label">
+          <span
+            >{{(config.sources.metadataStore.label || 'chooseACatalogRecord') |
+            translate}}</span
+          >
+        </label>
+
+        <div class="col-sm-10">
+          <div class="input-group gn-margin-bottom">
+            <span class="input-group-addon"><i class="fa fa-search"></i></span>
+            <input
+              class="form-control"
+              data-ng-change="triggerSearch()"
+              type="text"
+              data-ng-model="searchObj.params.any"
+              data-ng-model-options="modelOptions"
+              autocomplete="off"
+              placeholder="{{'anyPlaceHolder' | translate}}"
+              aria-label="{{'anyPlaceHolder' | translate}}"
+              autofocus=""
+            />
+          </div>
+
+          <!-- $parent.stateObj.selectRecords as data-ng-search-form introduces a new scope -->
+          <div
+            data-gn-search-form-results
+            data-gn-search-form-results-mode="simple"
+            data-gn-search-form-results-selection-mode="local simple"
+            data-search-results="searchResults"
+            data-select-records="$parent.stateObj.selectRecords"
+            data-pagination-info="paginationInfo"
+          ></div>
+        </div>
+      </div>
+
+      <div
+        class="form-group gn-nomargin-bottom"
+        data-gn-doi-search-panel=""
+        data-doi-url="config.sources['doiapi'].url"
+        data-doi-prefix="config.sources['doiapi'].params.prefix"
+        data-doi-query-pattern="config.sources['doiapi'].params.query"
+        data-add-to-selection-cb="addToSelection(record)"
+        data-remove-from-selection-cb="removeFromSelection(record)"
+        data-ng-show="config.sources['doiapi']"
+      ></div>
+
+      <div
+        data-gn-remote-record-selector=""
+        data-ng-show="config.sources['remoteurl']"
+      ></div>
+
+      <p class="alert alert-warning" data-ng-show="alertMsg">{{alertMsg}}</p>
+
+      <h4 data-ng-show="mode == 'dataset' && layers.length > 0">
+        <span data-translate="">chooseZeroOrMoreLayerFromService</span>
+        <span>{{currentMdTitle}}</span>
+      </h4>
+      <h4 data-ng-show="mode == 'service' && layers.length > 0">
+        <span data-translate="">chooseZeroOrMoreLayer</span>
+        <span>{{currentMdTitle}}</span>
+      </h4>
+      <div
+        data-gn-layers-grid
+        data-gn-selection-mode="layerSelectionMode"
+        data-layers="layers"
+        data-selection="srcParams.selectedLayers"
+      ></div>
+
+      <div>
+        <label>
+          <input type="checkbox" data-ng-model="addOnlineSrcInDataset" />
+          <span data-translate="">addTheFollowingLinkInDataset</span>
+        </label>
+        <span>{{onlineSrcLink}}</span>
+      </div>
+    </div>
+    <div class="">
+      <button
+        type="button"
+        class="btn navbar-btn btn-success"
+        data-gn-click-and-spin="linkTo(addOnlineSrcInDataset)"
+        ng-disabled="(stateObj.selectRecords.length < 1)"
+      >
+        <i class="fa gn-icon-service"></i>&nbsp;
+        <span data-translate="" data-ng-show="mode == 'service'">linkToService</span>
+        <span data-translate="" data-ng-hide="mode == 'service'">linkToDataset</span>
+      </button>
+
+      <div data-gn-need-help="linking-dataset-or-service" class="pull-right"></div>
+    </div>
+  </form>
+</div>

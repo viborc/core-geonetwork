@@ -1,0 +1,28 @@
+<fieldset>
+  <legend data-translate="">uuidMergePolicy</legend>
+  <div
+    data-ng-show="harvester['@type'] == 'webdav'
+                     || harvester['@type'] == 'geonetwork'
+                     || harvester['@type'] == 'csw'
+                     || harvester['@type'] == 'oaipmh'
+                     || harvester['@type'] == 'filesystem'
+                     || harvester['@type'] == 'sftp'
+                     || harvester['@type'] == 'database'"
+  >
+    <label class="control-label">
+      <span>{{"harvesterOverrideUUID" | translate}}</span>
+    </label>
+    <select data-ng-model="harvester.options.overrideUuid" class="form-control">
+      <option value="SKIP">
+        <span>{{"harvesterOverrideUUID-skip" | translate}}</span>
+      </option>
+      <option value="OVERRIDE">
+        <span>{{"harvesterOverrideUUID-overwrite" | translate}}</span>
+      </option>
+      <option value="RANDOM">
+        <span>{{"harvesterOverrideUUID-random" | translate}}</span>
+      </option>
+    </select>
+    <span class="help-block ng-scope" data-translate="">harvesterOverrideUUIDHelp</span>
+  </div>
+</fieldset>

@@ -1,0 +1,72 @@
+// Dark mode toggle button styles
+.dark-mode-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background-color: #333;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 5px;
+  cursor: pointer;
+  z-index: 9999;
+  text-decoration: none;
+
+  &:hover {
+    background-color: #444;
+  }
+
+  .fa {
+    margin-right: 5px;
+  }
+}
+
+// Dark theme styles
+body.gn-dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+
+  a {
+    color: #4da6ff;
+
+    &:hover {
+      color: #80bdff;
+    }
+  }
+
+  .navbar-default {
+    background-color: #1e1e1e;
+    border-color: #444;
+
+    .navbar-brand,
+    .navbar-nav > li > a {
+      color: #e0e0e0;
+    }
+  }
+
+  .panel {
+    background-color: #1e1e1e;
+    border-color: #444;
+
+    .panel-heading {
+      background-color: #2a2a2a;
+      border-color: #444;
+      color: #e0e0e0;
+    }
+  }
+
+  .form-control {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+  }
+
+  .btn-default {
+    background-color: #333;
+    border-color: #555;
+    color: #e0e0e0;
+
+    &:hover {
+      background-color: #444;
+    }
+  }
+}

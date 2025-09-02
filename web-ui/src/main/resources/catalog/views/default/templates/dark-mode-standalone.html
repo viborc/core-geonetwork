@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Dark Mode Toggle</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"
+    />
+    <style>
+      body.gn-dark-theme {
+        background-color: #121212;
+        color: #e0e0e0;
+      }
+
+      .dark-mode-toggle {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        background-color: #333;
+        color: #fff;
+        padding: 10px 15px;
+        border-radius: 5px;
+        cursor: pointer;
+        z-index: 9999;
+        text-decoration: none;
+      }
+
+      .dark-mode-toggle:hover {
+        background-color: #444;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Dark Mode Toggle Example</h1>
+    <p>Click the button in the bottom right corner to toggle dark mode.</p>
+
+    <a href="#" class="dark-mode-toggle" onclick="toggleDarkMode(event)">
+      <i class="fa fa-moon-o"></i>
+      <span>Dark mode</span>
+    </a>
+
+    <script>
+      // Toggle dark mode
+      function toggleDarkMode(event) {
+        if (event) {
+          event.preventDefault();
+        }
+
+        var isDarkMode = localStorage.getItem("gn-dark-mode") === "true";
+        isDarkMode = !isDarkMode;
+
+        localStorage.setItem("gn-dark-mode", isDarkMode);
+
+        if (isDarkMode) {
+          document.body.classList.add("gn-dark-theme");
+          // Update button text and icon
+          var button = document.querySelector(".dark-mode-toggle");
+          var icon = button.querySelector("i");
+          var span = button.querySelector("span");
+          if (icon) {
+            icon.classList.remove("fa-moon-o");
+            icon.classList.add("fa-sun-o");
+          }
+          if (span) {
+            span.textContent = "Light mode";
+          }
+        } else {
+          document.body.classList.remove("gn-dark-theme");
+          // Update button text and icon
+          var button = document.querySelector(".dark-mode-toggle");
+          var icon = button.querySelector("i");
+          var span = button.querySelector("span");
+          if (icon) {
+            icon.classList.remove("fa-sun-o");
+            icon.classList.add("fa-moon-o");
+          }
+          if (span) {
+            span.textContent = "Dark mode";
+          }
+        }
+      }
+
+      // Initialize dark mode based on localStorage
+      (function () {
+        var isDarkMode = localStorage.getItem("gn-dark-mode") === "true";
+        if (isDarkMode) {
+          document.body.classList.add("gn-dark-theme");
+          // Update button text and icon
+          var button = document.querySelector(".dark-mode-toggle");
+          var icon = button.querySelector("i");
+          var span = button.querySelector("span");
+          if (icon) {
+            icon.classList.remove("fa-moon-o");
+            icon.classList.add("fa-sun-o");
+          }
+          if (span) {
+            span.textContent = "Light mode";
+          }
+        }
+      })();
+    </script>
+  </body>
+</html>

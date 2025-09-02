@@ -1,0 +1,143 @@
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.geonetwork-opensource</groupId>
+    <artifactId>geonetwork</artifactId>
+    <version>4.4.9-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>gn-release</artifactId>
+  <packaging>pom</packaging>
+  <name>GeoNetwork Release module</name>
+  <description>Use to create zip distribution packages (copies from files from web which must be built first).</description>
+
+  <licenses>
+    <license>
+      <name>General Public License (GPL)</name>
+      <url>http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt</url>
+      <distribution>repo</distribution>
+    </license>
+  </licenses>
+
+  <dependencies>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>gn-web-app</artifactId>
+      <version>${project.version}</version>
+      <type>war</type>
+    </dependency>
+  </dependencies>
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>reset</id>
+            <goals><goal>clean</goal></goals>
+            <configuration>
+              <filesets>
+                <fileset>
+                  <directory>jetty</directory>
+                </fileset>
+              </filesets>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <!-- jetty-download is an optional build step for generating release -->
+    <!-- hack: using the integration phase steps to build before install -->
+    <profile>
+      <id>jetty-download</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.googlecode.maven-download-plugin</groupId>
+            <artifactId>download-maven-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jetty-download</id>
+                <phase>pre-integration-test</phase>
+                <!-- prepare-package step moved later in maven lifecycle to avoid slowing down local testing -->
+                <goals>
+                  <goal>wget</goal>
+                </goals>
+                <configuration>
+                  <url>${jetty.download}</url>
+                  <unpack>true</unpack>
+                  <outputDirectory>${project.basedir}</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>jetty-rename</id>
+                <phase>pre-integration-test</phase>
+                <!-- prepare-package step moved later in maven lifecycle to avoid slowing down local testing -->
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <echo>Rename downloaded jetty folder.</echo>
+                    <move file="${project.basedir}/${jetty.file}"
+                          tofile="${project.basedir}/jetty"/>
+                    <replace file="${project.basedir}/jetty/etc/jetty-deploy.xml">
+                      <replacefilter token='default="webapps"' value='default="../web"'/>
+                    </replace>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>bundle</id>
+      <activation>
+        <property>
+          <name>release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <executions>
+              <execution>
+                <phase>post-integration-test</phase>
+                <!-- package step moved later in maven lifecycle to avoid slowing down local testing -->
+                <goals>
+                  <goal>run</goal>
+                </goals>
+                <configuration>
+                  <target>
+                    <ant antfile="build.xml"/>
+                  </target>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+
+  </profiles>
+</project>

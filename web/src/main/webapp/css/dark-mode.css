@@ -1,0 +1,63 @@
+/* Dark mode styles */
+body.gn-dark-theme {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+body.gn-dark-theme a {
+  color: #4da6ff;
+}
+
+body.gn-dark-theme a:hover {
+  color: #80bdff;
+}
+
+body.gn-dark-theme .navbar-default {
+  background-color: #1e1e1e;
+  border-color: #444;
+}
+
+body.gn-dark-theme .navbar-default .navbar-brand,
+body.gn-dark-theme .navbar-default .navbar-nav > li > a {
+  color: #e0e0e0;
+}
+
+body.gn-dark-theme .panel {
+  background-color: #1e1e1e;
+  border-color: #444;
+}
+
+body.gn-dark-theme .panel .panel-heading {
+  background-color: #2a2a2a;
+  border-color: #444;
+  color: #e0e0e0;
+}
+
+body.gn-dark-theme .form-control {
+  background-color: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.gn-dark-theme .btn-default {
+  background-color: #333;
+  border-color: #555;
+  color: #e0e0e0;
+}
+
+body.gn-dark-theme .btn-default:hover {
+  background-color: #444;
+}
+
+/* Dark mode toggle button */
+.dark-mode-toggle {
+  cursor: pointer;
+}
+
+.dark-mode-toggle .fa {
+  margin-right: 5px;
+}
+
+.dark-mode-toggle:hover {
+  color: #337ab7;
+}

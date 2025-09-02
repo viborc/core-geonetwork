@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dark Mode Complete</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="css/dark-mode.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .dark-mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #f0f0f0;
+      color: #333;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 9999;
+      text-decoration: none;
+    }
+    
+    body.gn-dark-theme .dark-mode-toggle {
+      background-color: #333;
+      color: #e0e0e0;
+    }
+    
+    .dark-mode-toggle:hover {
+      background-color: #e0e0e0;
+    }
+    
+    body.gn-dark-theme .dark-mode-toggle:hover {
+      background-color: #444;
+    }
+    
+    .fa {
+      margin-right: 5px;
+    }
+    
+    .footer {
+      margin-top: 50px;
+      padding: 20px;
+      background-color: #f0f0f0;
+      border-top: 1px solid #ddd;
+    }
+    
+    body.gn-dark-theme .footer {
+      background-color: #1e1e1e;
+      border-top-color: #444;
+    }
+    
+    .footer ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      display: flex;
+    }
+    
+    .footer ul li {
+      margin-right: 20px;
+    }
+    
+    .footer ul li a {
+      text-decoration: none;
+      color: #333;
+    }
+    
+    body.gn-dark-theme .footer ul li a {
+      color: #e0e0e0;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dark Mode Complete</h1>
+    <p>This is a complete test page for the dark mode functionality.</p>
+    <p>Click the button in the bottom right corner or in the footer to toggle dark mode.</p>
+    
+    <div class="footer">
+      <ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Contact</a></li>
+        <li><a href="#">GitHub</a></li>
+        <li><a href="#">API</a></li>
+        <li><a href="#" onclick="toggleDarkMode(event)">
+          <i class="fa fa-moon-o"></i>
+          <span>Dark mode</span>
+        </a></li>
+      </ul>
+    </div>
+    
+    <a href="#" class="dark-mode-toggle" onclick="toggleDarkMode(event)">
+      <i class="fa fa-moon-o"></i>
+      <span>Dark mode</span>
+    </a>
+  </div>
+  
+  <script src="scripts/dark-mode.js"></script>
+</body>
+</html>

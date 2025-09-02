@@ -1,0 +1,23 @@
+<div>
+  <div class="alert alert-danger" role="alert" ng-show="withRecent && notSupported">
+    <span translate>localStorageNotSupported</span>
+  </div>
+
+  <div class="alert alert-danger" role="alert" ng-show="processes.length === 0">
+    <span translate>noRecentProcessFound</span>
+  </div>
+
+  <ul class="list-group processes-list">
+    <a
+      href
+      class="list-group-item list-group-item-action"
+      data-ng-repeat="p in processes"
+      ng-click="ctrl.select(p)"
+      ng-class="{active: p.name == wpsLink.name && p.url == wpsLink.url}"
+      title="{{ p.url }}"
+    >
+      <i class="fa fa-fw {{p.icon || 'fa-cog'}}"></i>&nbsp;{{ p.labels[lang]|empty:p.name
+      }}
+    </a>
+  </ul>
+</div>

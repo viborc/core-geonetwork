@@ -1,0 +1,21 @@
+<div class="footer">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-8">
+        <p data-translate>poweredBy</p>
+      </div>
+      <div class="col-md-4 text-right">
+        <a
+          href=""
+          class="gn-theme-toggle"
+          ng-click="toggleDarkMode()"
+          title="{{'toggleDarkMode' | translate}}"
+        >
+          <i class="fa" ng-class="{'fa-moon': !isDarkMode, 'fa-sun': isDarkMode}"></i>
+          <span ng-show="!isDarkMode" data-translate>darkMode</span>
+          <span ng-show="isDarkMode" data-translate>lightMode</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</div>

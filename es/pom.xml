@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>geonetwork</artifactId>
+    <groupId>org.geonetwork-opensource</groupId>
+    <version>4.4.9-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>gn-es</artifactId>
+  <name>GeoNetwork index using Elasticsearch</name>
+  <packaging>pom</packaging>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-enforcer-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>check-readme</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <evaluateBeanshell>
+                  <message>Update README.md examples for Elasticsearch ${es.version}</message>
+                  <condition>
+                      import java.util.regex.Pattern;
+
+                      esVersion = "${es.version}";
+                      print("Scanning README for " + esVersion);
+
+                      docker = Pattern.compile("elasticsearch:(\\d.\\d\\d.\\d)");
+                      download = Pattern.compile("Download Elasticsearch (\\d.\\d\\d.\\d)");
+                      folder = Pattern.compile("es/elasticsearch-(\\d.\\d\\d.\\d)");
+
+                      patterns = new Pattern[]{ docker, download, folder};
+
+                      readme = new BufferedReader(new FileReader("README.md"));
+
+                      number = 0;
+                      while ((line = readme.readLine()) != null) {
+                        number++;
+                        for (pattern : patterns ){
+                          matcher = pattern.matcher(line);
+                          if (matcher.find()) {
+                            if (!esVersion.equals(matcher.group(1))) {
+                              print("README.md:"+number+" FAILURE: " + line);
+                              return false;
+                            }
+                          }
+                        }
+                      }
+                      readme.close();
+                    true;
+                  </condition>
+                </evaluateBeanshell>
+              </rules>
+            </configuration>
+          </execution>
+          <execution>
+            <id>check-docker</id>
+            <goals>
+              <goal>enforce</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <evaluateBeanshell>
+                  <message>Update docker-compose.yml for Elasticsearch ${es.version}</message>
+                  <condition>
+                      import java.util.regex.Pattern;
+
+                      boolean scanDockerCompose(String filename){
+                        esVersion = "${es.version}";
+                        print("Scanning "+filename+" for " + esVersion);
+
+                        docker = Pattern.compile("elasticsearch:(\\d.\\d\\d.\\d)");
+                        kibana = Pattern.compile("kibana:(\\d.\\d\\d.\\d)");
+                        patterns = new Pattern[]{ docker, kibana};
+
+                        String baseDir = new File(java.net.URI.create("${project.baseUri}")).getAbsolutePath().toString();
+                        reader = new BufferedReader(new FileReader(baseDir+"/"+filename));
+
+                        number = 0;
+                        while ((line = reader.readLine()) != null) {
+                          number++;
+                          for (pattern : patterns) {
+                            matcher = pattern.matcher(line);
+                            if (matcher.find()) {
+                              if (!esVersion.equals(matcher.group(1))) {
+                                print(filename+":"+number+" FAILURE: " + line);
+                                return false;
+                              }
+                            }
+                          }
+                        }
+                        reader.close();
+                        return true;
+                      }
+
+                      return scanDockerCompose("docker-compose.yml");
+                  </condition>
+                </evaluateBeanshell>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+  <profiles>
+    <profile>
+      <id>es-download</id>
+      <activation>
+        <property>
+          <name>es-download</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>com.googlecode.maven-download-plugin</groupId>
+            <artifactId>download-maven-plugin</artifactId>
+            <inherited>false</inherited>
+            <executions>
+              <execution>
+                <id>download-elastic-search</id>
+                <goals>
+                  <goal>wget</goal>
+                </goals>
+                <configuration>
+                  <url>
+                    https://artifacts.elastic.co/downloads/elasticsearch/elasticsearch-${es.version}-${es.platform}.${es.installer.extension}
+                  </url>
+                  <unpack>true</unpack>
+                  <outputDirectory>${project.basedir}</outputDirectory>
+                </configuration>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>es-start</id>
+      <activation>
+        <property>
+          <name>es-start</name>
+        </property>
+      </activation>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <inherited>false</inherited>
+            <configuration>
+              <executable>elasticsearch-${es.version}/bin/${es.executable}</executable>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <id>windows</id>
+      <activation>
+        <os>
+          <family>Windows</family>
+        </os>
+      </activation>
+      <properties>
+        <es.executable>elasticsearch.bat</es.executable>
+      </properties>
+    </profile>
+  </profiles>
+  <modules>
+    <module>es-dashboards</module>
+  </modules>
+
+  <properties>
+    <es.executable>elasticsearch</es.executable>
+  </properties>
+</project>

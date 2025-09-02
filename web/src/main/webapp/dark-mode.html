@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Dark Mode</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 20px;
+      transition: background-color 0.3s, color 0.3s;
+    }
+    
+    body.gn-dark-theme {
+      background-color: #121212;
+      color: #e0e0e0;
+    }
+    
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .dark-mode-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background-color: #333;
+      color: #fff;
+      padding: 10px 15px;
+      border-radius: 5px;
+      cursor: pointer;
+      z-index: 9999;
+      text-decoration: none;
+    }
+    
+    .dark-mode-toggle:hover {
+      background-color: #444;
+    }
+    
+    .fa {
+      margin-right: 5px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Dark Mode</h1>
+    <p>This is a test page for the dark mode functionality.</p>
+    <p>Click the button in the bottom right corner to toggle dark mode.</p>
+    
+    <a href="#" class="dark-mode-toggle" onclick="toggleDarkMode(event)">
+      <i class="fa fa-moon-o"></i>
+      <span>Dark mode</span>
+    </a>
+  </div>
+  
+  <script src="scripts/dark-mode.js"></script>
+</body>
+</html>

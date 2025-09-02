@@ -1,0 +1,77 @@
+<li>
+  <a
+    href="#"
+    class="gn-theme-toggle"
+    onclick="toggleDarkMode(event)"
+    title="Toggle dark mode"
+  >
+    <i class="fa fa-fw fa-moon"></i>
+    <span class="dark-mode-text">Dark mode</span>
+    <span class="light-mode-text" style="display: none">Light mode</span>
+  </a>
+</li>
+
+<script>
+  // Initialize dark mode based on localStorage
+  function initDarkMode() {
+    var isDarkMode = localStorage.getItem("gn-dark-mode") === "true";
+    if (isDarkMode) {
+      document.body.classList.add("gn-dark-theme");
+    }
+
+    // Update toggle button state
+    var toggleButtons = document.querySelectorAll(".gn-theme-toggle");
+    toggleButtons.forEach(function (button) {
+      updateToggleButton(button, isDarkMode);
+    });
+  }
+
+  // Update the toggle button appearance
+  function updateToggleButton(button, isDarkMode) {
+    var icon = button.querySelector("i");
+    var darkModeText = button.querySelector(".dark-mode-text");
+    var lightModeText = button.querySelector(".light-mode-text");
+
+    if (icon) {
+      if (isDarkMode) {
+        icon.classList.remove("fa-moon");
+        icon.classList.add("fa-sun");
+      } else {
+        icon.classList.remove("fa-sun");
+        icon.classList.add("fa-moon");
+      }
+    }
+
+    if (darkModeText && lightModeText) {
+      darkModeText.style.display = isDarkMode ? "none" : "inline";
+      lightModeText.style.display = isDarkMode ? "inline" : "none";
+    }
+  }
+
+  // Toggle dark mode
+  function toggleDarkMode(event) {
+    if (event) {
+      event.preventDefault();
+    }
+
+    var isDarkMode = localStorage.getItem("gn-dark-mode") === "true";
+    isDarkMode = !isDarkMode;
+
+    localStorage.setItem("gn-dark-mode", isDarkMode);
+
+    if (isDarkMode) {
+      document.body.classList.add("gn-dark-theme");
+    } else {
+      document.body.classList.remove("gn-dark-theme");
+    }
+
+    // Update all toggle buttons
+    var toggleButtons = document.querySelectorAll(".gn-theme-toggle");
+    toggleButtons.forEach(function (button) {
+      updateToggleButton(button, isDarkMode);
+    });
+  }
+
+  // Initialize when DOM is loaded
+  document.addEventListener("DOMContentLoaded", initDarkMode);
+</script>
