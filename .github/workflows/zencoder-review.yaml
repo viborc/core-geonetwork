@@ -11,13 +11,13 @@ jobs:
     runs-on: ubuntu-latest
 
     # Only run when the PR is opened, OR when a review is requested *for* our bot
-    if: |
-      github.event.action == 'opened' ||
-      (
-        github.event.action == 'review_requested' &&
-        github.event.requested_reviewer.login == 'viborc'
-      )
-
+    #if: |
+     # github.event.action == 'opened' ||
+     # (
+     #   github.event.action == 'review_requested' &&
+    #    github.event.requested_reviewer.login == 'viborc'
+  #    )
+#
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
