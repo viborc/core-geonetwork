@@ -2,7 +2,7 @@
 
 [![Build Status](https://github.com/geonetwork/core-geonetwork/actions/workflows/linux.yml/badge.svg?branch=main)](https://github.com/geonetwork/core-geonetwork/actions/workflows/linux.yml?query=branch%3Amain) [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/8626/badge)](https://www.bestpractices.dev/projects/8626)  [![CLA assistant](https://cla-assistant.io/readme/badge/geonetwork/geonetwork)](https://cla-assistant.io/geonetwork/geonetwork)
 
-## Features
+## Features for this demo
 
 * Immediate search access to local and distributed geospatial catalogues
 * Uploading and downloading of data, graphics, documents, pdf files and any other content type
