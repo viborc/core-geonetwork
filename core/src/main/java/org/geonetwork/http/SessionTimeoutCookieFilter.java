@@ -41,17 +41,50 @@ import jeeves.server.UserSession;
 import jeeves.server.sources.http.JeevesServlet;
 
 /**
- * Add server time and session expiration time to cookie to track on the client side if session is
- * about to be cancelled. If user is not authenticated, the server time is the same as expiration
- * time.
+ * @brief Session timeout tracking filter that adds cookies for client-side timeout monitoring
  *
- * Created by francois on 29/07/15.
+ * This filter adds server time and session expiration time to cookies to track on the client side
+ * if a session is about to expire. These cookies can be used by client-side JavaScript to warn users
+ * about impending session timeouts and provide options to extend their sessions.
+ *
+ * If the user is not authenticated, the server time is set as the same as the expiration time,
+ * effectively indicating an already expired session.
+ *
+ * @note Created by francois on 29/07/15.
+ * @implements javax.servlet.Filter
  */
 public class SessionTimeoutCookieFilter implements javax.servlet.Filter {
+    /**
+     * @brief Initializes the filter
+     *
+     * This method is called by the web container to indicate to a filter that it is being placed into service.
+     * No initialization is required for this filter.
+     *
+     * @param filterConfig The filter configuration object used by the servlet container to pass information
+     *                     to a filter during initialization
+     * @throws ServletException If an error occurs during initialization
+     */
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
     }
 
+    /**
+     * @brief Performs the actual filtering work
+     *
+     * This method adds two cookies to the response:
+     * - serverTime: Contains the current server time in milliseconds
+     * - sessionExpiry: Contains the session expiration time for authenticated users,
+     *                  or the current time for non-authenticated users
+     *
+     * These cookies allow client-side code to calculate the remaining session time
+     * and warn users before their session expires.
+     *
+     * @param req The servlet request
+     * @param resp The servlet response
+     * @param filterChain The filter chain for invoking the next filter or the resource
+     * @throws IOException If an I/O error occurs during this filter's processing
+     * @throws ServletException If the processing fails for any other reason
+     */
     public void doFilter(ServletRequest req, ServletResponse resp, FilterChain filterChain) throws IOException, ServletException {
         HttpServletResponse httpResp = (HttpServletResponse) resp;
         HttpServletRequest httpReq = (HttpServletRequest) req;
@@ -90,6 +123,12 @@ public class SessionTimeoutCookieFilter implements javax.servlet.Filter {
         filterChain.doFilter(req, resp);
     }
 
+    /**
+     * @brief Cleans up any resources held by the filter
+     *
+     * This method is called by the web container to indicate to a filter that it is being taken out of service.
+     * No cleanup is required for this filter.
+     */
     @Override
     public void destroy() {
     }
